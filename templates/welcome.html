@@ -7,41 +7,58 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
-            background-color: var(--bg-main);
+            background-image: url("{{ url_for('static', filename='eco_welcome_bg.png') }}");
+            background-size: cover;
+            background-position: center;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(6, 78, 59, 0.4), rgba(0, 0, 0, 0.2));
+            z-index: 1;
         }
 
         .hero-premium {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 40px;
             text-align: center;
-            max-width: 900px;
-            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            padding: 60px 40px;
             z-index: 2;
-            animation: fadeIn 1s ease-out;
+            animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .main-title {
-            font-size: 5rem;
-            font-weight: 800;
-            color: var(--text-head);
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: white;
             line-height: 1;
-            letter-spacing: -2px;
+            letter-spacing: -3px;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .sub-title {
-            font-size: 1.4rem;
-            color: var(--text-body);
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 50px;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            font-weight: 500;
         }
 
         .hero-actions {
@@ -51,14 +68,39 @@
         }
 
         .btn-hero {
-            padding: 18px 45px;
-            font-size: 1.1rem;
+            padding: 20px 50px;
+            font-size: 1.2rem;
+            border-radius: 60px;
+            font-weight: 800;
+        }
+
+        .btn-start-premium {
+            background: #ffffff;
+            color: #064e3b;
+        }
+        
+        .btn-start-premium:hover {
+            background: #f0fdf4;
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .btn-login-premium {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-login-premium:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: white;
         }
 
         @media (max-width: 768px) {
-            .main-title { font-size: 3rem; }
-            .sub-title { font-size: 1.1rem; }
+            .main-title { font-size: 3.5rem; }
+            .sub-title { font-size: 1.2rem; }
             .hero-actions { flex-direction: column; }
+            .hero-premium { padding: 40px 20px; }
         }
     </style>
 </head>
@@ -70,14 +112,14 @@
         <p id="welcome-sub" class="sub-title">AI-Based Smart Waste Segregation & Community Management System.</p>
         
         <div class="hero-actions">
-            <a href="/role-selection" class="btn btn-primary btn-hero" id="btn-start">Get Started</a>
-            <a href="/login" class="btn btn-secondary btn-hero" id="btn-login">Partner Login</a>
+            <a href="/role-selection" class="btn btn-start-premium btn-hero" id="btn-start">Get Started</a>
+            <a href="/login" class="btn btn-login-premium btn-hero" id="btn-login">Partner Login</a>
         </div>
 
         <div style="margin-top: 60px;">
-            <select id="lang-selector" onchange="switchLanguage(this.value)" style="width: auto; padding: 8px 20px; font-weight: 700;">
-                <option value="en">English</option>
-                <option value="ta">தமிழ்</option>
+            <select id="lang-selector" onchange="switchLanguage(this.value)" style="width: auto; padding: 12px 25px; font-weight: 700; border-radius: 50px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
+                <option value="en" style="color: black;">English</option>
+                <option value="ta" style="color: black;">தமிழ்</option>
             </select>
         </div>
     </div>

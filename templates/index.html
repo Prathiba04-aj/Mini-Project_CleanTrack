@@ -10,7 +10,8 @@
 
     <nav>
         <a href="/home" class="logo">
-            <span>🌱 CleanTrack</span>
+            <span style="background: var(--primary-dark); color: white; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; margin-right: 8px;">🌱</span>
+            <span style="letter-spacing: -1px; font-weight: 900;">CleanTrack</span>
         </a>
         <div class="nav-links">
             <a href="/home">Home</a>
@@ -52,24 +53,26 @@
         </header>
 
         {% if current_user.role == 'Resident' %}
-            <a href="/classify" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body);">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 40px;">
+            <a href="/classify" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); border-width: 3px;">
                 <div class="animate-float" style="font-size: 3rem; margin-bottom: 20px;">📸</div>
-                <h3 style="color: var(--text-head); margin-bottom: 10px;">AI Classifier</h3>
-                <p>Snap a photo of waste to get instant segregation guides.</p>
+                <h3 style="color: var(--text-head); margin-bottom: 10px; font-weight: 800;">AI Classifier</h3>
+                <p style="font-size: 0.95rem;">Snap a photo of waste for instant guides.</p>
             </a>
-            <a href="/report" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); animation-delay: 0.2s;">
+            <a href="/report" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); animation-delay: 0.2s; border-width: 3px;">
                 <div class="animate-float" style="font-size: 3rem; margin-bottom: 20px; animation-delay: 0.5s;">🚩</div>
-                <h3 style="color: var(--text-head); margin-bottom: 10px;">Report Waste</h3>
-                <p>Spotted a dump? Report it to the municipality with GPS.</p>
+                <h3 style="color: var(--text-head); margin-bottom: 10px; font-weight: 800;">Report Waste</h3>
+                <p style="font-size: 0.95rem;">Alert authorities about local dumps.</p>
             </a>
-            <a href="/dashboard" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); animation-delay: 0.4s;">
+            <a href="/dashboard" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); animation-delay: 0.4s; border-width: 3px;">
                 <div class="animate-float" style="font-size: 3rem; margin-bottom: 20px; animation-delay: 1s;">📊</div>
-                <h3 style="color: var(--text-head); margin-bottom: 10px;">Status Board</h3>
-                <p>Track the progress of your reports and community actions.</p>
+                <h3 style="color: var(--text-head); margin-bottom: 10px; font-weight: 800;">Status Board</h3>
+                <p style="font-size: 0.95rem;">Track progress of your reports.</p>
             </a>
+        </div>
         {% endif %}
 
-        <div class="card-premium" style="margin-top: 40px;">
+        <div class="card-premium" style="margin-top: 40px; padding: 25px; border-width: 3px;">
             <h2 style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">🚀 Recent Activity</h2>
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse;">

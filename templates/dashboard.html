@@ -10,7 +10,8 @@
 
     <nav>
         <a href="/home" class="logo">
-            <span>🌱 CleanTrack</span>
+            <span style="background: var(--primary-dark); color: white; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; margin-right: 8px;">🌱</span>
+            <span style="letter-spacing: -1px; font-weight: 900;">CleanTrack</span>
         </a>
         <div class="nav-links">
             <a href="/home">Home</a>
@@ -38,7 +39,7 @@
 
         <div class="report-grid">
             {% for r in reports %}
-            <div class="card-premium" style="padding: 0; display: flex; flex-direction: row; height: 280px; overflow: hidden;">
+            <div class="card-premium" style="padding: 0; display: flex; flex-direction: row; height: 280px; overflow: hidden; border-width: 3px;">
                 <div style="width: 320px; background: #f1f5f9; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                     {% if r.image_url %}
                     <img src="{{ url_for('static', filename='uploads/' + r.image_url) }}" alt="Waste" style="width: 100%; height: 100%; object-fit: cover;">

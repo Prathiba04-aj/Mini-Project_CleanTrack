@@ -10,7 +10,8 @@
 
     <nav>
         <a href="/home" class="logo">
-            <span>🌱 CleanTrack</span>
+            <span style="background: var(--primary-dark); color: white; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; margin-right: 8px;">🌱</span>
+            <span style="letter-spacing: -1px; font-weight: 900;">CleanTrack</span>
         </a>
         <div class="nav-links">
             <a href="/home">Home</a>
@@ -33,7 +34,7 @@
             <p>Upload a photo and let our AI guide your segregation.</p>
         </header>
 
-        <div class="card-premium" id="upload-panel" style="border: 2px dashed var(--border); text-align: center; background: rgba(5, 150, 105, 0.02);">
+        <div class="card-premium" id="upload-panel" style="border: 3px dashed var(--primary-dark); text-align: center; background: rgba(5, 150, 105, 0.02);">
             <div id="drop-zone" style="cursor: pointer; padding: 40px;">
                 <input type="file" id="file-input" hidden accept="image/*">
                 <div id="placeholder">
@@ -56,7 +57,7 @@
             <p style="margin-top: 20px; font-weight: 700; color: var(--primary);">Analyzing material...</p>
         </div>
 
-        <div id="result-view" class="card-premium animate" style="display: none; padding: 0; overflow: hidden; margin-top: 40px;">
+        <div id="result-view" class="card-premium animate" style="display: none; padding: 0; overflow: hidden; margin-top: 40px; border-width: 3px;">
             <div style="display: grid; grid-template-columns: 1fr 1.5fr;">
                 <div id="res-image-wrap" style="background: #f1f5f9;">
                     <img id="res-image" style="width: 100%; height: 100%; object-fit: cover;">

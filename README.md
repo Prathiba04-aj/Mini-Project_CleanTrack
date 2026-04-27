@@ -33,8 +33,8 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/clean-track.git
-   cd clean-track
+   git clone https://github.com/yourusername/Mini-Project_CleaTrack.git
+   cd Mini-Project_CleaTrack
    ```
 
 2. **Install dependencies:**
