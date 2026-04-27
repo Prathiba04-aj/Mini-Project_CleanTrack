@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Track | Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container" style="display:flex; align-items:center; justify-content:center; min-height:80vh;">
+        <main class="card form-card" style="width:100%; max-width:400px;">
+            <header style="margin-bottom: 2rem;">
+                <h2 style="color:var(--primary)">Join Clean Track 🌱</h2>
+                <p>Create an account to track your impact</p>
+            </header>
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Choose a username">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Create a password">
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;" onclick="handleSignup()">Sign Up</button>
+            
+            <p style="text-align:center; margin-top:1.5rem; font-size:0.9rem; color:var(--text-muted);">
+                Already have an account? <a href="/login" style="color:var(--primary); font-weight:600;">Login</a>
+            </p>
+        </main>
+    </div>
+
+    <script>
+        async function handleSignup() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('password', password);
+
+            const resp = await fetch('/api/signup', { method: 'POST', body: formData });
+            const data = await resp.json();
+
+            if (resp.ok) {
+                alert("Account created! Please login.");
+                window.location.href = "/login";
+            } else {
+                alert(data.error);
+            }
+        }
+    </script>
+</body>
+</html>

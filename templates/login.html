@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Track | Auth Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #16a34a;
+            --accent-green: #34D399;
+            --bg-dark: #0a0a0a;
+            --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #0d1f0f 50%, #0a1628 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-white: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--text-white);
+            position: relative;
+        }
+
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        .top-bar {
+            position: fixed; top: 0; width: 100%; padding: 1.5rem 5%;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        }
+        .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--accent-green); font-size: 1.2rem; cursor: pointer; text-decoration: none; }
+        #lang-selector { padding: 8px 12px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; cursor: pointer; outline: none; }
+
+        /* --- GLASS CARD --- */
+        .auth-card {
+            position: relative; z-index: 2;
+            width: 100%; max-width: 900px; min-height: 550px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 0 40px rgba(52, 211, 153, 0.15);
+            display: flex;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Left Branding Panel */
+        .branding-panel {
+            flex: 1; background: rgba(255, 255, 255, 0.03);
+            padding: 50px; display: flex; flex-direction: column; justify-content: center;
+            border-right: 1px solid var(--glass-border);
+        }
+
+        .recycle-icon { width: 80px; height: 80px; fill: var(--accent-green); animation: float 4s ease-in-out infinite; margin-bottom: 20px; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        .brand-title { font-size: 2.2rem; font-weight: 800; color: var(--accent-green); }
+        .brand-subtitle { font-size: 1.1rem; opacity: 0.8; margin-bottom: 20px; }
+        .role-badge { 
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(52, 211, 153, 0.1); padding: 8px 16px; border-radius: 50px;
+            font-size: 0.9rem; font-weight: 600; color: var(--accent-green); margin-bottom: 30px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .features { list-style: none; }
+        .features li { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 0.95rem; opacity: 0.9; }
+        .features li span { color: var(--accent-green); }
+
+        /* Right Form Panel */
+        .form-panel { flex: 1.2; padding: 50px; display: flex; flex-direction: column; }
+
+        .tabs { display: flex; gap: 30px; margin-bottom: 30px; position: relative; }
+        .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.3s; padding-bottom: 8px; position: relative; }
+        .tab-btn.active { color: white; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--accent-green); border-radius: 10px; }
+
+        /* Forms */
+        .form-content { display: none; }
+        .form-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .form-group { margin-bottom: 18px; position: relative; }
+        .form-group i { position: absolute; left: 15px; top: 40px; color: var(--text-muted); font-size: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+        .form-group input {
+            width: 100%; padding: 12px 15px 12px 42px;
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+            border-radius: 12px; color: white; outline: none; transition: 0.3s; font-size: 0.95rem;
+        }
+        .form-group input::placeholder { color: rgba(255,255,255,0.3); }
+        .form-group input:focus { border-color: var(--accent-green); box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2); }
+
+        .pass-toggle { position: absolute; right: 15px; top: 40px; cursor: pointer; color: var(--text-muted); }
+
+        .forgot { display: block; text-align: right; font-size: 0.8rem; color: var(--accent-green); text-decoration: none; margin-top: -10px; margin-bottom: 20px; }
+
+        .btn-primary {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary:hover { transform: scale(1.03); box-shadow: 0 8px 25px rgba(22, 163, 74, 0.4); }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .divider { text-align: center; margin: 20px 0; font-size: 0.85rem; color: var(--text-muted); }
+        .btn-google {
+            width: 100%; padding: 12px; border: 1px solid var(--glass-border); border-radius: 12px;
+            background: none; color: white; font-weight: 500; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-google:hover { background: rgba(255,255,255,0.05); }
+
+        /* Strength Indicator */
+        .strength-container { height: 4px; width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 8px; overflow: hidden; }
+        .strength-bar { height: 100%; width: 0%; transition: 0.4s; }
+
+        /* Spinner */
+        .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s infinite linear; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile */
+        @media (max-width: 850px) {
+            .auth-card { flex-direction: column; max-width: 500px; margin: 50px 20px; }
+            .branding-panel { padding: 40px; }
+            .blob { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles"></canvas>
+
+    <div class="top-bar">
+        <a href="/" class="logo-area">♻️ <span>Clean Track</span></a>
+        <div class="nav-actions">
+            <select id="lang-selector" onchange="switchLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="ta">தமிழ்</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <!-- LEFT PANEL -->
+        <div class="branding-panel">
+            <svg class="recycle-icon" viewBox="0 0 24 24">
+                <path d="M17,8C15.39,8 13.94,8.81 13.06,10.05L12,11.5L10.94,10.05C10.06,8.81 8.61,8 7,8c-2.76,0-5,2.24-5,5c0,4.41,10,9,10,9s10-4.59,10-9C22,10.24,19.76,8,17,8z" />
+            </svg>
+            <h2 class="brand-title" id="brand-title">Clean Track</h2>
+            <p class="brand-subtitle" id="brand-subtitle">Smart Waste Segregation System</p>
+            
+            <div class="role-badge">
+                <span id="role-icon">👤</span> <span id="role-text">Logging in as: Resident</span>
+            </div>
+
+            <ul class="features">
+                <li id="f1"><span>✅</span> AI Waste Classification</li>
+                <li id="f2"><span>✅</span> GPS Garbage Reporting</li>
+                <li id="f3"><span>✅</span> Real-time Dashboard</li>
+            </ul>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="form-panel">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('login')" id="tab-login">Login</button>
+                <button class="tab-btn" onclick="switchTab('signup')" id="tab-signup">Sign Up</button>
+            </div>
+
+            <!-- LOGIN -->
+            <div id="login-view" class="form-content active">
+                <div class="form-group">
+                    <label id="lbl-email">Email / Username</label>
+                    <i>📧</i>
+                    <input type="text" id="login-id" placeholder="Enter your credentials">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-pass">Password</label>
+                    <i>🔒</i>
+                    <input type="password" id="login-pass" placeholder="••••••••">
+                    <span class="pass-toggle" onclick="togglePass('login-pass')">👁️</span>
+                </div>
+                <a href="#" class="forgot" id="lbl-forgot">Forgot Password?</a>
+                <button class="btn-primary" onclick="executeAuth('login')" id="btn-login">
+                    <span class="spinner"></span> <span id="txt-login">Login</span>
+                </button>
+                <div class="divider">— or —</div>
+                <button class="btn-google">Continuing with Google</button>
+            </div>
+
+            <!-- SIGNUP -->
+            <div id="signup-view" class="form-content">
+                <div class="form-group">
+                    <label id="lbl-name">Full Name</label>
+                    <i>👤</i>
+                    <input type="text" id="signup-name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-signup-email">Email Address</label>
+                    <i>📧</i>
+                    <input type="email" id="signup-email" placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-signup-pass">Password</label>
+                    <i>🔒</i>
+                    <input type="password" id="signup-pass" placeholder="••••••••" oninput="checkStrength(this.value)">
+                    <span class="pass-toggle" onclick="togglePass('signup-pass')">👁️</span>
+                    <div class="strength-container"><div class="strength-bar" id="strength-bar"></div></div>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-confirm">Confirm Password</label>
+                    <i>🔒</i>
+                    <input type="password" id="signup-confirm" placeholder="••••••••">
+                </div>
+                <div style="margin-bottom: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="terms"> <span id="lbl-terms">I agree to Terms & Conditions</span>
+                </div>
+                <button class="btn-primary" onclick="executeAuth('signup')" id="btn-signup">
+                    <span class="spinner"></span> <span id="txt-create">Create Account</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                login: "Login", signup: "Sign Up", email: "Email / Username", pass: "Password", 
+                forgot: "Forgot Password?", loginBtn: "Login", roleMsg: "Logging in as:",
+                name: "Full Name", create: "Create Account", terms: "I agree to Terms & Conditions",
+                confirm: "Confirm Password", emailAddr: "Email Address"
+            },
+            ta: {
+                login: "உள்நுழை", signup: "பதிவு செய்", email: "மின்னஞ்சல் / பயனர் பெயர்", pass: "கடவுச்சொல்", 
+                forgot: "கடவுச்சொல் மறந்தீர்களா?", loginBtn: "உள்நுழை", roleMsg: "இவராக உள்நுழைகிறீர்கள்:",
+                name: "முழு பெயர்", create: "கணக்கு உருவாக்கு", terms: "விதிமுறைகளை ஏற்றுக்கொள்கிறேன்",
+                confirm: "கடவுச்சொல்லை உறுதிப்படுத்து", emailAddr: "மின்னஞ்சல் முகவரி"
+            }
+        };
+
+        function switchLanguage(lang) {
+            document.getElementById('tab-login').innerText = translations[lang].login;
+            document.getElementById('tab-signup').innerText = translations[lang].signup;
+            document.getElementById('lbl-email').innerText = translations[lang].email;
+            document.getElementById('lbl-pass').innerText = translations[lang].pass;
+            document.getElementById('lbl-forgot').innerText = translations[lang].forgot;
+            document.getElementById('txt-login').innerText = translations[lang].loginBtn;
+            document.getElementById('lbl-name').innerText = translations[lang].name;
+            document.getElementById('lbl-signup-email').innerText = translations[lang].emailAddr;
+            document.getElementById('lbl-signup-pass').innerText = translations[lang].pass;
+            document.getElementById('lbl-confirm').innerText = translations[lang].confirm;
+            document.getElementById('lbl-terms').innerText = translations[lang].terms;
+            document.getElementById('txt-create').innerText = translations[lang].create;
+            
+            const roleBase = translations[lang].roleMsg;
+            const roleName = localStorage.getItem('selectedRole') || 'Resident';
+            document.getElementById('role-text').innerText = `${roleBase} ${roleName}`;
+            localStorage.setItem('selectedLanguage', lang);
+        }
+
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.form-content').forEach(c => c.classList.remove('active'));
+            if(type === 'login') {
+                document.getElementById('tab-login').classList.add('active');
+                document.getElementById('login-view').classList.add('active');
+            } else {
+                document.getElementById('tab-signup').classList.add('active');
+                document.getElementById('signup-view').classList.add('active');
+            }
+        }
+
+        function togglePass(id) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function checkStrength(p) {
+            const bar = document.getElementById('strength-bar');
+            let s = 0;
+            if(p.length > 5) s = 30;
+            if(p.length > 8 && /[A-Z]/.test(p)) s = 60;
+            if(p.length > 10 && /[!@#$%^&*]/.test(p)) s = 100;
+
+            bar.style.width = s + '%';
+            bar.style.background = s < 40 ? '#ef4444' : s < 70 ? '#f59e0b' : '#22c55e';
+        }
+
+        async function executeAuth(type) {
+            const btn = document.getElementById(type === 'login' ? 'btn-login' : 'btn-signup');
+            const text = btn.querySelector('span:not(.spinner)');
+            
+            // Immediate feedback
+            btn.style.opacity = '0.7';
+            btn.style.pointerEvents = 'none';
+            text.innerText = 'Verifying...';
+
+            const formData = new FormData();
+            if(type === 'login') {
+                formData.append('username', document.getElementById('login-id').value);
+                formData.append('password', document.getElementById('login-pass').value);
+                
+                try {
+                    const resp = await fetch('/api/login', { method: 'POST', body: formData });
+                    const d = await resp.json();
+                    if(d.success) {
+                        window.location.replace('/home');
+                        return;
+                    }
+                    alert("Login Alert: " + (d.error || "Check credentials"));
+                } catch(e) {
+                    console.error(e);
+                    alert("Server Connectivity Issue. Please restart your terminal/python app.py and refresh.");
+                }
+            } else {
+                formData.append('username', document.getElementById('signup-name').value); 
+                formData.append('email', document.getElementById('signup-email').value);
+                formData.append('password', document.getElementById('signup-pass').value);
+                formData.append('role', localStorage.getItem('selectedRole') || 'Resident');
+                
+                try {
+                    const resp = await fetch('/api/signup', { method: 'POST', body: formData });
+                    const d = await resp.json();
+                    if(d.success) {
+                        alert("✅ Registration Successful! You can now Login.");
+                        switchTab('login');
+                    } else alert("Signup Alert: " + d.error);
+                } catch(e) {
+                    console.error(e);
+                    alert("Signup Connection Failed. Ensure the python app is running.");
+                }
+            }
+            
+            // Reset if failed
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'all';
+            text.innerText = type === 'login' ? 'Login' : 'Create Account';
+        }
+
+        // Particle System
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 2
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.globalAlpha = 0.3;
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                ctx.fill();
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        window.onload = () => {
+            initParticles();
+            drawParticles();
+            
+            // Handle role from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role') || 'Resident';
+            localStorage.setItem('selectedRole', role);
+            document.getElementById('role-icon').innerText = role === 'Staff' ? '🏢' : '👤';
+            
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('lang-selector').value = savedLang;
+            switchLanguage(savedLang);
+        }
+        window.onresize = initParticles;
+    </script>
+</body>
+</html>

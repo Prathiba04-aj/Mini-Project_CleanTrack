@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Track | Select Role</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: var(--bg-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(161,71%,93%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 100%, hsla(180,50%,98%,1) 0, transparent 50%);
+        }
+        
+        .role-wrapper {
+            width: 100%;
+            max-width: 850px;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .role-title-main {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-head);
+            letter-spacing: -1px;
+            margin-bottom: 50px;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .role-card-new {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border);
+            border-radius: 32px;
+            padding: 60px 40px;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: block;
+        }
+
+        .role-card-new:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .role-icon-new {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .role-card-new:hover .role-icon-new {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .role-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-head);
+            margin-bottom: 15px;
+        }
+
+        .role-detail {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .role-grid { grid-template-columns: 1fr; }
+            .role-title-main { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="role-wrapper">
+        <h1 class="role-title-main" id="role-heading">Select Your Role</h1>
+        
+        <div class="role-grid">
+            <a href="/login?role=Resident" class="role-card-new">
+                <span class="role-icon-new">👤</span>
+                <h3 class="role-name" id="role-res-title">Resident</h3>
+                <p class="role-detail" id="role-res-desc">Contribute to a cleaner city by reporting waste and using AI tools.</p>
+            </a>
+
+            <a href="/login?role=Staff" class="role-card-new">
+                <span class="role-icon-new">🏢</span>
+                <h3 class="role-name" id="role-staff-title">Municipal Staff</h3>
+                <p class="role-detail" id="role-staff-desc">Oversee city cleanliness, manage reports, and verify community actions.</p>
+            </a>
+        </div>
+
+        <div style="margin-top: 50px;">
+            <select id="lang-selector" onchange="switchLanguage(this.value)" style="width: auto; padding: 10px 20px; font-weight: 700;">
+                <option value="en">English</option>
+                <option value="ta">தமிழ்</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                heading: "Select Your Role",
+                resTitle: "Resident",
+                resDesc: "Contribute to a cleaner city by reporting waste and using AI tools.",
+                staffTitle: "Municipal Staff",
+                staffDesc: "Oversee city cleanliness, manage reports, and verify actions."
+            },
+            ta: {
+                heading: "உங்கள் பங்கைத் தேர்ந்தெடுக்கவும்",
+                resTitle: "குடியிருப்பாளர்",
+                resDesc: "கழிவுப் புகாரளிப்பதன் மூலம் நகரத்தைச் சுத்தப்படுத்த உதவவும்.",
+                staffTitle: "நகராட்சி ஊழியர்",
+                staffDesc: "நகரத் தூய்மையை நிர்வகிக்கவும் மற்றும் புகார்களைச் சரிபார்க்கவும்."
+            }
+        };
+
+        function switchLanguage(lang) {
+            document.getElementById('role-heading').innerText = translations[lang].heading;
+            document.getElementById('role-res-title').innerText = translations[lang].resTitle;
+            document.getElementById('role-res-desc').innerText = translations[lang].resDesc;
+            document.getElementById('role-staff-title').innerText = translations[lang].staffTitle;
+            document.getElementById('role-staff-desc').innerText = translations[lang].staffDesc;
+            localStorage.setItem('selectedLanguage', lang);
+        }
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('lang-selector').value = savedLang;
+            switchLanguage(savedLang);
+        }
+    </script>
+</body>
+</html>

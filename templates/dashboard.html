@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Track | Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <a href="/home" class="logo">
+            <span>🌱 CleanTrack</span>
+        </a>
+        <div class="nav-links">
+            <a href="/home">Home</a>
+            {% if current_user.role == 'Resident' %}
+            <a href="/classify">Classify</a>
+            <a href="/report">Report</a>
+            {% endif %}
+            <a href="/dashboard">Dashboard</a>
+            {% if current_user.role in ['Staff', 'Admin'] %}
+            <a href="/admin">Portal</a>
+            {% endif %}
+            {% if current_user.is_authenticated %}
+            <div class="user-tag">👤 {{ current_user.username }}</div>
+            <a href="/logout" style="color: #ef4444; font-size: 0.8rem;">Logout</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container animate">
+        <header>
+            <a href="/home" style="text-decoration: none; color: var(--primary); font-weight: 700; margin-bottom: 10px; display: block;">← Back to Home</a>
+            <h1>Waste Dashboard 📊</h1>
+            <p>Live community reports and resolution status.</p>
+        </header>
+
+        <div class="report-grid">
+            {% for r in reports %}
+            <div class="card-premium" style="padding: 0; display: flex; flex-direction: row; height: 280px; overflow: hidden;">
+                <div style="width: 320px; background: #f1f5f9; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    {% if r.image_url %}
+                    <img src="{{ url_for('static', filename='uploads/' + r.image_url) }}" alt="Waste" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">No Image Available</span>
+                    {% endif %}
+                </div>
+                <div style="flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 1.5rem; color: var(--text-head);">📍 {{ r.location }}</h3>
+                        <span class="status-badge status-{{ r.status.lower() }}">{{ r.status }}</span>
+                    </div>
+                    <p style="font-size: 1.1rem; color: var(--text-body); margin-bottom: 25px; line-height: 1.5;">
+                        {{ r.description }}
+                    </p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); pt: 20px; margin-top: auto;">
+                        <small style="color: var(--text-muted);">Reported: {{ r.timestamp.strftime('%d %B, %H:%M') if r.timestamp else 'Recent' }}</small>
+                        <small style="font-weight: 700; color: var(--primary);">By {{ r.author.username }}</small>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card-premium" style="text-align: center; padding: 100px;">
+                <h2 style="opacity: 0.3;">No reports found in the system.</h2>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Clean Track - Intelligence for a Greener Tomorrow</p>
+    </footer>
+
+</body>
+</html>

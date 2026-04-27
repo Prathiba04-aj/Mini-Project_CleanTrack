@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanTrack | Classify Waste</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <a href="/home" class="logo">
+            <span>🌱 CleanTrack</span>
+        </a>
+        <div class="nav-links">
+            <a href="/home">Home</a>
+            {% if current_user.role == 'Resident' %}
+            <a href="/classify">Classify</a>
+            <a href="/camera">Live</a>
+            <a href="/report">Report</a>
+            {% endif %}
+            <a href="/dashboard">Dashboard</a>
+            {% if current_user.is_authenticated %}
+            <div class="user-tag">👤 {{ current_user.username }}</div>
+            <a href="/logout" style="color: #ef4444; font-size: 0.8rem;">Logout</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container animate" style="max-width: 900px;">
+        <header>
+            <h1>AI Classifier 📸</h1>
+            <p>Upload a photo and let our AI guide your segregation.</p>
+        </header>
+
+        <div class="card-premium" id="upload-panel" style="border: 2px dashed var(--border); text-align: center; background: rgba(5, 150, 105, 0.02);">
+            <div id="drop-zone" style="cursor: pointer; padding: 40px;">
+                <input type="file" id="file-input" hidden accept="image/*">
+                <div id="placeholder">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">☁️</div>
+                    <h2 style="margin-bottom: 10px;">Drag or Click to Analyze</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">Identify waste materials instantly.</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Browse Images</button>
+                </div>
+                <img id="image-preview" style="display: none; width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; margin-bottom: 25px;">
+                
+                <div id="action-btns" style="display: none; gap: 15px; margin-top: 20px;">
+                    <button class="btn btn-primary" style="flex: 1; justify-content: center;" id="classify-btn" onclick="performClassification()">✨ Classify Waste</button>
+                    <button class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="resetUpload()">🗑️ Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loader" style="display: none; text-align: center; padding: 40px;">
+            <div style="width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animate: spin 1s infinite linear; margin: 0 auto;"></div>
+            <p style="margin-top: 20px; font-weight: 700; color: var(--primary);">Analyzing material...</p>
+        </div>
+
+        <div id="result-view" class="card-premium animate" style="display: none; padding: 0; overflow: hidden; margin-top: 40px;">
+            <div style="display: grid; grid-template-columns: 1fr 1.5fr;">
+                <div id="res-image-wrap" style="background: #f1f5f9;">
+                    <img id="res-image" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="padding: 50px;">
+                    <span id="res-status" class="status-badge status-verified" style="margin-bottom: 15px; display: inline-block;">---</span>
+                    <h2 id="res-title" style="font-size: 2.5rem; margin-bottom: 5px;">---</h2>
+                    <p id="res-cat" style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px;">---</p>
+                    
+                    <div id="steps-area">
+                        <h4 style="margin-bottom: 15px; color: var(--text-head);">How to dispose:</h4>
+                        <ul id="res-steps" style="list-style: none; padding: 0;">
+                            <!-- Steps added here -->
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px; display: flex; gap: 15px;">
+                        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="resetUpload()">♻️ New Scan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('placeholder');
+        const actionBtns = document.getElementById('action-btns');
+        const loader = document.getElementById('loader');
+        const resultView = document.getElementById('result-view');
+        
+        let droppedFile = null;
+
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+        
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--primary)"; };
+        dropZone.ondragleave = () => { dropZone.style.borderColor = "var(--border)"; };
+        dropZone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+
+        function handleFile(file) {
+            if (!file) return;
+            droppedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                actionBtns.style.display = 'flex';
+                dropZone.style.borderColor = "transparent";
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUpload() {
+            droppedFile = null;
+            fileInput.value = '';
+            preview.style.display = 'none';
+            placeholder.style.display = 'block';
+            actionBtns.style.display = 'none';
+            resultView.style.display = 'none';
+            document.getElementById('upload-panel').style.display = 'block';
+            dropZone.style.borderColor = "var(--border)";
+        }
+
+        async function performClassification() {
+            if (!droppedFile) return;
+            
+            document.getElementById('upload-panel').style.display = 'none';
+            loader.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('file', droppedFile);
+
+            try {
+                const resp = await fetch('/api/classify', { method: 'POST', body: formData });
+                const data = await resp.json();
+                
+                loader.style.display = 'none';
+                resultView.style.display = 'block';
+                
+                document.getElementById('res-image').src = preview.src;
+                document.getElementById('res-title').innerText = data.material;
+                document.getElementById('res-cat').innerText = data.category;
+                document.getElementById('res-status').innerText = data.recyclable;
+                document.getElementById('res-status').className = 'status-badge ' + (data.recyclable.toLowerCase().includes('non') ? 'status-fake' : 'status-verified');
+
+                const stepContainer = document.getElementById('res-steps');
+                stepContainer.innerHTML = '';
+                data.steps.forEach(step => {
+                    const li = document.createElement('li');
+                    li.style.display = 'flex';
+                    li.style.gap = '10px';
+                    li.style.marginBottom = '10px';
+                    li.innerHTML = `<span style="color: var(--primary);">✔</span> <span>${step}</span>`;
+                    stepContainer.appendChild(li);
+                });
+
+            } catch (err) {
+                console.error(err);
+                alert("Deep learning analysis failed.");
+                resetUpload();
+            }
+        }
+    </script>
+
+    <footer>
+        <p>&copy; 2026 Clean Track AI Laboratory</p>
+    </footer>
+
+</body>
+<style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</html>

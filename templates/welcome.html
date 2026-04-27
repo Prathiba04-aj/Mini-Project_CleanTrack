@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Track | AI Waste Segregation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: var(--bg-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-premium {
+            text-align: center;
+            max-width: 900px;
+            padding: 40px;
+            z-index: 2;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .main-title {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--text-head);
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sub-title {
+            font-size: 1.4rem;
+            color: var(--text-body);
+            margin-bottom: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-hero {
+            padding: 18px 45px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 3rem; }
+            .sub-title { font-size: 1.1rem; }
+            .hero-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-premium">
+        <div class="animate-float" style="font-size: 4rem; margin-bottom: 20px;">🌍</div>
+        <h1 id="welcome-title" class="main-title">Clean Track</h1>
+        <p id="welcome-sub" class="sub-title">AI-Based Smart Waste Segregation & Community Management System.</p>
+        
+        <div class="hero-actions">
+            <a href="/role-selection" class="btn btn-primary btn-hero" id="btn-start">Get Started</a>
+            <a href="/login" class="btn btn-secondary btn-hero" id="btn-login">Partner Login</a>
+        </div>
+
+        <div style="margin-top: 60px;">
+            <select id="lang-selector" onchange="switchLanguage(this.value)" style="width: auto; padding: 8px 20px; font-weight: 700;">
+                <option value="en">English</option>
+                <option value="ta">தமிழ்</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Clean Track",
+                sub: "AI-Based Smart Waste Segregation & Community Management System.",
+                start: "Get Started",
+                login: "Partner Login"
+            },
+            ta: {
+                title: "கிளீன் டிராக்",
+                sub: "AI அடிப்படையிலான ஸ்மார்ட் கழிவுப் பிரிப்பு மற்றும் சமூக மேலாண்மை அமைப்பு.",
+                start: "தொடங்கவும்",
+                login: "பயனர் உள்நுழைவு"
+            }
+        };
+
+        function switchLanguage(lang) {
+            document.getElementById('welcome-title').innerText = translations[lang].title;
+            document.getElementById('welcome-sub').innerText = translations[lang].sub;
+            document.getElementById('btn-start').innerText = translations[lang].start;
+            document.getElementById('btn-login').innerText = translations[lang].login;
+            localStorage.setItem('selectedLanguage', lang);
+        }
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('lang-selector').value = savedLang;
+            switchLanguage(savedLang);
+        }
+    </script>
+
+</body>
+</html>

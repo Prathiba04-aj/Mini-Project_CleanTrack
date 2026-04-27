@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanTrack | Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <a href="/home" class="logo">
+            <span>🌱 CleanTrack</span>
+        </a>
+        <div class="nav-links">
+            <a href="/home">Home</a>
+            {% if current_user.role == 'Resident' %}
+            <a href="/classify">Classify</a>
+            <a href="/camera">Live</a>
+            <a href="/report">Report</a>
+            {% endif %}
+            <a href="/dashboard">Dashboard</a>
+            {% if current_user.role in ['Staff', 'Admin'] %}
+            <a href="/admin">Portal</a>
+            {% endif %}
+            {% if current_user.is_authenticated %}
+            <div class="user-tag" style="display: flex; align-items: center; gap: 8px;">
+                <span>👤 {{ current_user.username }}</span>
+                <a href="/logout" style="color: #ef4444; font-size: 0.8rem; margin-left: 10px;">Logout</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container animate">
+        <header>
+            {% if current_user.role == 'Staff' %}
+            <h1>Municipality Portal 🏢</h1>
+            <p>Review and verify community waste reports for a cleaner city.</p>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                <a href="/admin" class="btn btn-primary">Verification Queue</a>
+                <a href="/dashboard" class="btn btn-secondary">Global Dashboard</a>
+            </div>
+            {% else %}
+            <h1>Welcome, {{ current_user.username }}! 🌱</h1>
+            <p>Join the movement to make our city cleaner and smarter.</p>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                <a href="/classify" class="btn btn-primary">Scan Waste</a>
+                <a href="/report" class="btn btn-secondary">Report Issue</a>
+            </div>
+            {% endif %}
+        </header>
+
+        {% if current_user.role == 'Resident' %}
+            <a href="/classify" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body);">
+                <div class="animate-float" style="font-size: 3rem; margin-bottom: 20px;">📸</div>
+                <h3 style="color: var(--text-head); margin-bottom: 10px;">AI Classifier</h3>
+                <p>Snap a photo of waste to get instant segregation guides.</p>
+            </a>
+            <a href="/report" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); animation-delay: 0.2s;">
+                <div class="animate-float" style="font-size: 3rem; margin-bottom: 20px; animation-delay: 0.5s;">🚩</div>
+                <h3 style="color: var(--text-head); margin-bottom: 10px;">Report Waste</h3>
+                <p>Spotted a dump? Report it to the municipality with GPS.</p>
+            </a>
+            <a href="/dashboard" class="card-premium animate-fade-in" style="text-decoration: none; text-align: center; color: var(--text-body); animation-delay: 0.4s;">
+                <div class="animate-float" style="font-size: 3rem; margin-bottom: 20px; animation-delay: 1s;">📊</div>
+                <h3 style="color: var(--text-head); margin-bottom: 10px;">Status Board</h3>
+                <p>Track the progress of your reports and community actions.</p>
+            </a>
+        {% endif %}
+
+        <div class="card-premium" style="margin-top: 40px;">
+            <h2 style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">🚀 Recent Activity</h2>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                            <th style="padding: 15px;">Location</th>
+                            <th style="padding: 15px;">Date</th>
+                            <th style="padding: 15px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if reports %}
+                            {% for r in reports[:5] %}
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 15px;">📍 {{ r.location }}</td>
+                                <td style="padding: 15px;">{{ r.timestamp.strftime('%d %b') if r.timestamp else 'Recent' }}</td>
+                                <td style="padding: 15px;">
+                                    <span class="status-badge status-{{ r.status.lower() }}">{{ r.status }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" style="padding: 30px; text-align: center; opacity: 0.5;">No recent reports found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="/dashboard" style="color: var(--primary); font-weight: 700; text-decoration: none;">View All Reports →</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Clean Track - Intelligence for a Greener Tomorrow</p>
+    </footer>
+
+</body>
+</html>
